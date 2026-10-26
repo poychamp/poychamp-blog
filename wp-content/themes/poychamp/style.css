@@ -1,0 +1,441 @@
+/*
+Theme Name: Poychamp
+Author: poychamp
+Description: Dark-only block theme built from specs/design-spec-dark.md. Gold and silver on neutral, Be Vietnam Pro.
+Requires at least: 6.6
+Tested up to: 7.1
+Requires PHP: 8.1
+Version: 0.1.0
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: poychamp
+*/
+
+/*
+ * theme.json holds the tokens: palette, font, sizes, spacing, buttons, links.
+ * This file is only what theme.json can't express: breakpoint bumps, states,
+ * the card style and form fields. Dark only, nothing here switches on a media query
+ * except width.
+ */
+
+/* ---- Dark-only base (spec §2, Appendix B) ---- */
+
+html {
+	color-scheme: dark;
+	background-color: var(--wp--preset--color--neutral-950);
+}
+
+body {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+	background: var(--wp--preset--color--gold-500);
+	color: var(--wp--preset--color--black);
+}
+
+/* ---- Container gutter: px-4 md:px-6 lg:px-8 ---- */
+
+:root {
+	--poychamp-gutter: 16px;
+}
+
+@media (min-width: 768px) {
+	:root {
+		--poychamp-gutter: 24px;
+	}
+}
+
+@media (min-width: 1024px) {
+	:root {
+		--poychamp-gutter: 32px;
+	}
+}
+
+/*
+ * ---- Page structure (docs/mobile-flexible-layout.md) ----
+ * .wp-site-blocks is the page: a flex column at least one screen tall.
+ * Short content sits centred with the footer on the bottom edge. Long content
+ * scrolls with the footer after it. No media queries, no fixed positioning.
+ */
+
+html,
+body {
+	margin: 0;
+	min-height: 100%;
+}
+
+/* body prefix: outranks WordPress's own .wp-site-blocks padding rule */
+body .wp-site-blocks {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh; /* fallback for browsers without dvh */
+	min-height: 100dvh; /* the visible height on mobile */
+	box-sizing: border-box;
+	/* Safe areas on this one element only. Needs viewport-fit=cover (functions.php). */
+	padding:
+		env(safe-area-inset-top)
+		env(safe-area-inset-right)
+		env(safe-area-inset-bottom)
+		env(safe-area-inset-left);
+}
+
+/* Header, main and footer own their spacing, so no block gap between them. */
+body .wp-site-blocks > * {
+	margin-block: 0;
+}
+
+body .wp-site-blocks > header,
+body .wp-site-blocks > footer {
+	flex-shrink: 0;
+}
+
+/* Auto margins centre when there is room and drop to zero when there isn't. */
+body .wp-site-blocks > main {
+	margin-block: auto;
+}
+
+.poychamp-header {
+	border-bottom: 1px solid var(--wp--preset--color--neutral-800);
+	padding-block: var(--wp--preset--spacing--4);
+}
+
+/* Current page in the nav: text-gold-400 */
+.wp-block-navigation .current-menu-item > .wp-block-navigation-item__content,
+.wp-block-navigation .current_page_item > .wp-block-navigation-item__content,
+.wp-block-navigation .wp-block-navigation-item__content[aria-current="page"] {
+	color: var(--wp--preset--color--gold-400);
+}
+
+/* Footer: py-6 md:py-8, text-xs md:text-sm, no top margin */
+.poychamp-footer {
+	border-top: 1px solid var(--wp--preset--color--neutral-800);
+	padding-block: var(--wp--preset--spacing--6);
+	color: var(--wp--preset--color--neutral-400);
+	font-size: var(--wp--preset--font-size--xs);
+}
+
+.poychamp-footer a {
+	color: var(--wp--preset--color--neutral-400);
+	text-decoration: none;
+}
+
+.poychamp-footer a:hover {
+	color: var(--wp--preset--color--gold-400);
+}
+
+@media (min-width: 768px) {
+	.poychamp-footer {
+		padding-block: var(--wp--preset--spacing--8);
+		font-size: var(--wp--preset--font-size--sm);
+	}
+}
+
+/* List / index pages: py-6 md:py-8 */
+.poychamp-main-list {
+	padding-block: var(--wp--preset--spacing--6);
+}
+
+/* Content pages: mt-4 md:mt-8 pb-12 md:pb-16. Padding, not margin: main's margins are auto. */
+.poychamp-main-content {
+	padding-block-start: var(--wp--preset--spacing--4);
+	padding-block-end: var(--wp--preset--spacing--12);
+}
+
+@media (min-width: 768px) {
+	.poychamp-main-list {
+		padding-block: var(--wp--preset--spacing--8);
+	}
+
+	.poychamp-main-content {
+		padding-block-start: var(--wp--preset--spacing--8);
+		padding-block-end: var(--wp--preset--spacing--16);
+	}
+}
+
+/* ---- Meta rows ---- */
+
+.poychamp-meta {
+	color: var(--wp--preset--color--neutral-400);
+	font-size: var(--wp--preset--font-size--xs);
+}
+
+.poychamp-meta--post {
+	font-size: var(--wp--preset--font-size--sm);
+}
+
+/* ---- Card: bg-neutral-900 border-neutral-800 rounded-2xl, lifts on hover ---- */
+
+.is-style-card {
+	background: var(--wp--preset--color--neutral-900);
+	border: 1px solid var(--wp--preset--color--neutral-800);
+	border-radius: 16px;
+	overflow: hidden;
+	transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.is-style-card:hover {
+	border-color: var(--wp--preset--color--neutral-700);
+	box-shadow: var(--wp--preset--shadow--card-hover);
+}
+
+.is-style-card .wp-block-post-featured-image {
+	margin: 0;
+	background: var(--wp--preset--color--neutral-800);
+}
+
+.is-style-card .wp-block-post-featured-image img {
+	display: block;
+}
+
+.poychamp-card-body {
+	padding: var(--wp--preset--spacing--4);
+}
+
+/* Card title (H3): text-base font-semibold leading-snug text-white */
+.poychamp-card-title {
+	font-size: var(--wp--preset--font-size--base);
+	font-weight: 600;
+	line-height: 1.375;
+	letter-spacing: 0;
+}
+
+/* ---- Single post / page ---- */
+
+.poychamp-main-content .wp-block-post-featured-image img,
+.wp-block-post-content .wp-block-image img {
+	border: 1px solid var(--wp--preset--color--neutral-800);
+	border-radius: 16px;
+}
+
+/* Inline body links: text-gold-400 underline decoration-gold-500/50 */
+.wp-block-post-content a:not(.wp-element-button),
+.wp-block-term-description a {
+	text-decoration: underline;
+	text-decoration-color: rgb(212 175 55 / 0.5);
+	text-underline-offset: 2px;
+	transition: color 150ms ease, text-decoration-color 150ms ease;
+}
+
+.wp-block-post-content a:not(.wp-element-button):hover,
+.wp-block-term-description a:hover {
+	text-decoration-color: var(--wp--preset--color--gold-400);
+}
+
+/* Inline code inside paragraphs */
+.wp-block-post-content :not(pre) > code {
+	background: var(--wp--preset--color--neutral-800);
+	color: var(--wp--preset--color--neutral-100);
+	border-radius: 6px;
+	padding: 2px 6px;
+	font-family: var(--wp--preset--font-family--mono);
+	font-size: 0.875em;
+}
+
+.wp-block-post-content table {
+	border-collapse: collapse;
+}
+
+.wp-block-post-content :is(th, td) {
+	border: 1px solid var(--wp--preset--color--neutral-800);
+	padding: var(--wp--preset--spacing--2) var(--wp--preset--spacing--3);
+}
+
+/* Prev / next: next is the primary (gold), previous the secondary (silver) */
+.poychamp-post-nav {
+	font-size: var(--wp--preset--font-size--sm);
+	font-weight: 500;
+}
+
+.poychamp-post-nav a {
+	text-decoration: none;
+	transition: color 150ms ease;
+}
+
+.poychamp-post-nav .post-navigation-link-previous a {
+	color: var(--wp--preset--color--silver-300);
+}
+
+.poychamp-post-nav .post-navigation-link-previous a:hover {
+	color: var(--wp--preset--color--silver-200);
+}
+
+/* ---- Pagination: current page in gold ---- */
+
+.wp-block-query-pagination-numbers .current {
+	color: var(--wp--preset--color--gold-400);
+}
+
+/* gap-3 between page numbers; core leaves only a text space */
+.wp-block-query-pagination-numbers {
+	display: flex;
+	gap: var(--wp--preset--spacing--3);
+}
+
+/* ---- Buttons (spec §4.2) ---- */
+
+.wp-element-button,
+.wp-block-button__link {
+	cursor: pointer;
+	transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+/* Secondary: silver filled, black text */
+.wp-block-button.is-style-secondary .wp-block-button__link {
+	background: var(--wp--preset--color--silver-500);
+	color: var(--wp--preset--color--black);
+}
+
+.wp-block-button.is-style-secondary .wp-block-button__link:hover {
+	background: var(--wp--preset--color--silver-600);
+}
+
+.wp-block-button.is-style-secondary .wp-block-button__link:active {
+	background: var(--wp--preset--color--silver-700);
+}
+
+/* Tertiary is core's Outline style, restyled in theme.json */
+.wp-block-button.is-style-outline .wp-block-button__link:hover {
+	background: var(--wp--preset--color--neutral-800);
+	color: var(--wp--preset--color--neutral-300);
+}
+
+/* ---- Form fields (spec §4.3): search, comments, password-protected posts ---- */
+
+:is(.wp-block-search, .wp-block-post-comments-form, .post-password-form)
+	:is(input[type="text"], input[type="email"], input[type="url"], input[type="search"], input[type="password"], textarea, select) {
+	width: 100%;
+	background: var(--wp--preset--color--neutral-800);
+	border: 1px solid var(--wp--preset--color--neutral-700);
+	border-radius: 8px;
+	padding: var(--wp--preset--spacing--2) var(--wp--preset--spacing--3);
+	color: var(--wp--preset--color--white);
+	font-family: inherit;
+	font-size: var(--wp--preset--font-size--sm);
+	line-height: 1.25rem;
+	outline: none;
+	box-sizing: border-box;
+}
+
+:is(.wp-block-search, .wp-block-post-comments-form, .post-password-form)
+	:is(input, textarea, select)::placeholder {
+	color: var(--wp--preset--color--neutral-500);
+}
+
+:is(.wp-block-search, .wp-block-post-comments-form, .post-password-form)
+	:is(input[type="text"], input[type="email"], input[type="url"], input[type="search"], input[type="password"], textarea, select):focus {
+	border-color: var(--wp--preset--color--gold-500);
+	box-shadow: 0 0 0 2px rgb(218 189 82 / 0.4);
+}
+
+.wp-block-search__inside-wrapper {
+	gap: var(--wp--preset--spacing--3);
+}
+
+.wp-block-search .wp-block-search__inside-wrapper {
+	border: 0;
+	padding: 0;
+	background: none;
+}
+
+.wp-block-post-comments-form label {
+	display: block;
+	margin-bottom: var(--wp--preset--spacing--1);
+	color: var(--wp--preset--color--neutral-300);
+	font-size: var(--wp--preset--font-size--sm);
+	font-weight: 500;
+}
+
+.wp-block-post-comments-form .required {
+	color: var(--wp--preset--color--red-400);
+}
+
+.wp-block-post-comments-form :is(.comment-notes, .logged-in-as) {
+	color: var(--wp--preset--color--neutral-400);
+	font-size: var(--wp--preset--font-size--xs);
+}
+
+.wp-block-post-comments-form .comment-form-cookies-consent label {
+	display: inline;
+}
+
+/* ---- Comments ---- */
+
+.poychamp-comment {
+	border-top: 1px solid var(--wp--preset--color--neutral-800);
+	padding-block: var(--wp--preset--spacing--4);
+}
+
+.wp-block-comment-author-name {
+	color: var(--wp--preset--color--white);
+	font-size: var(--wp--preset--font-size--sm);
+	font-weight: 600;
+}
+
+.wp-block-comment-reply-link a {
+	font-size: var(--wp--preset--font-size--sm);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+/* Card link: primary link, text-sm font-medium text-gold-400 hover:text-gold-300 */
+.poychamp-read-more {
+	display: inline-block;
+	margin-top: var(--wp--preset--spacing--2);
+	color: var(--wp--preset--color--gold-400);
+	font-size: var(--wp--preset--font-size--sm);
+	font-weight: 500;
+	text-decoration: none;
+	transition: color 150ms ease;
+}
+
+.poychamp-read-more:hover {
+	color: var(--wp--preset--color--gold-300);
+}
+
+/* ---- Post list: one post per row, hairline between ---- */
+
+.poychamp-post-item {
+	padding-block: var(--wp--preset--spacing--8);
+}
+
+.poychamp-post-item:first-child {
+	padding-block-start: var(--wp--preset--spacing--4);
+}
+
+li + li .poychamp-post-item {
+	border-top: 1px solid var(--wp--preset--color--neutral-800);
+}
+
+.poychamp-post-item .wp-block-post-featured-image {
+	margin-bottom: var(--wp--preset--spacing--3);
+}
+
+.poychamp-post-item .wp-block-post-featured-image img {
+	border: 1px solid var(--wp--preset--color--neutral-800);
+	border-radius: 16px;
+}
+
+.poychamp-post-item .wp-block-post-excerpt__excerpt {
+	margin: 0;
+}
+
+/* ---- Logo ---- */
+
+.poychamp-logo {
+	display: block;
+	flex-shrink: 0;
+	line-height: 0;
+	border-radius: 9999px;
+}
+
+.poychamp-logo img {
+	width: 40px;
+	height: 40px;
+}
+
+.poychamp-logo:focus-visible {
+	outline: 2px solid var(--wp--preset--color--gold-400);
+	outline-offset: 2px;
+}

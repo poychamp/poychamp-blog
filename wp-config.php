@@ -33,6 +33,8 @@ define('WP_SITEURL', WP_HOME);
 
 define('WP_DEBUG', WP_ENVIRONMENT_TYPE === 'local');
 define('WP_DEBUG_DISPLAY', WP_ENVIRONMENT_TYPE === 'local');
+// Locally, re-read theme.json and theme pattern files on every request instead of caching them.
+define('WP_DEVELOPMENT_MODE', WP_ENVIRONMENT_TYPE === 'local' ? 'theme' : '');
 
 // Core is baked into the image. Update it by bumping WORDPRESS_VERSION, never from wp-admin.
 define('WP_AUTO_UPDATE_CORE', false);
