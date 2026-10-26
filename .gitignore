@@ -1,0 +1,44 @@
+# Secrets. Only the placeholder file is committed.
+.env
+.env.*
+!.env.example
+
+# WordPress runtime data. Uploads live in the uploads volume in production, not in git.
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/upgrade-temp-backup/
+wp-content/cache/
+wp-content/debug.log
+wp-content/backup*/
+wp-content/backups/
+
+# Drop-ins written by caching plugins. They hold host-specific settings.
+wp-content/advanced-cache.php
+wp-content/object-cache.php
+wp-content/wp-cache-config.php
+
+# Database dumps and archives. These are backups with real data in them.
+*.sql
+*.sql.gz
+*.sql.zip
+*.tar.gz
+*.zip
+
+# Theme and plugin build tooling
+node_modules/
+# Root only. Many plugins ship their own vendor/, and production is built from the repo.
+/vendor/
+npm-debug.log*
+yarn-error.log*
+.sass-cache/
+
+# Logs
+*.log
+
+# Editors and OS
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db

@@ -1,0 +1,58 @@
+name: poychamp-blog
+
+# Version pins live here once, so both Dockerfiles always build the same stack.
+x-build-args: &build-args
+  PHP_VERSION: "8.4.27"
+  NGINX_VERSION: "1.30.6"
+  WORDPRESS_VERSION: "7.1.3"
+  WORDPRESS_SHA1: "491a78c7676b15dffcc69130c6054b8f49228a91"
+  APP_UID: ${APP_UID:-1000}
+  APP_GID: ${APP_GID:-1000}
+
+services:
+  php:
+    image: poychamp-blog-php:${APP_ENV:-local}
+    build:
+      context: .
+      dockerfile: docker/${APP_ENV:-local}/Dockerfile
+      target: php
+      args: *build-args
+    env_file: .env
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+      - ./wp-config.php:/var/www/html/wp-config.php:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  nginx:
+    image: poychamp-blog-nginx:${APP_ENV:-local}
+    build:
+      context: .
+      dockerfile: docker/${APP_ENV:-local}/Dockerfile
+      target: nginx
+      args: *build-args
+    ports:
+      - "${APP_HOST_PORT:-8000}:8080"
+    volumes:
+      - ./wp-content:/var/www/html/wp-content:ro
+    depends_on:
+      - php
+
+  db:
+    image: mariadb:11.8.9-noble
+    environment:
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  db-data:
